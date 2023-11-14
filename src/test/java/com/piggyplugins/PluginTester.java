@@ -6,6 +6,7 @@ import com.piggyplugins.AutoAerial.AutoAerialPlugin;
 import com.piggyplugins.AutoSmith.AutoSmith;
 import com.piggyplugins.Firemaking.FiremakingPlugin;
 import com.piggyplugins.PowerSkiller.PowerSkillerPlugin;
+import com.piggyplugins.SpeedDartMaker.SpeedDartMakerPlugin;
 import com.polyplugins.AutoBoner.AutoBonerPlugin;
 import com.polyplugins.AutoCombat.AutoCombatPlugin;
 import com.polyplugins.Butterfly.ButterflyPlugin;
@@ -21,7 +22,7 @@ public class PluginTester {
         ExternalPluginManager.loadBuiltin(EthanApiPlugin.class, PacketUtilsPlugin.class,
                 AutoCombatPlugin.class, AutoAerialPlugin.class, AutoBonerPlugin.class,
                 ButterflyPlugin.class, FiremakingPlugin.class, DialogueContinuerPlugin.class,
-                KittenFeederPlugin.class, AutoChompyPlugin.class, PowerSkillerPlugin.class, AutoTrapperPlugin.class);
+                KittenFeederPlugin.class, AutoChompyPlugin.class, PowerSkillerPlugin.class, AutoTrapperPlugin.class, SpeedDartMakerPlugin.class);
         RuneLite.main(args);
     }
 }
