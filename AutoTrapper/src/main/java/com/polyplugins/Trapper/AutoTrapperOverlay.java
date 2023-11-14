@@ -58,12 +58,14 @@ public class AutoTrapperOverlay extends Overlay {
         LineComponent traps = buildLine("Caught traps: ", String.valueOf(plugin.helper.getCaughtTraps()));
 
         LineComponent trapSupplies = buildLine("Set traps: ", String.valueOf(plugin.helper.getSetTraps()));
+        LineComponent tickRegion = buildLine("Ticks out of Region: ", String.valueOf(plugin.ticksNotInRegion));
 
         panelComponent.getChildren().add(timeout);
         panelComponent.getChildren().add(started);
         panelComponent.getChildren().add(maxTraps);
         panelComponent.getChildren().add(traps);
         panelComponent.getChildren().add(trapSupplies);
+        panelComponent.getChildren().add(tickRegion);
         panelComponent.render(graphics);
         return null;
     }

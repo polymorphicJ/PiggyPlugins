@@ -102,10 +102,10 @@ public class AutoTrapperPlugin extends Plugin {
         if (client.getGameState() != GameState.LOGGED_IN || !started) {
             return;
         }
-        if (ticksNotInRegion >= 20) {
-            EthanApiPlugin.sendClientMessage("Not in correct region, stopping plugin");
-            EthanApiPlugin.stopPlugin(this);
-        }
+//        if (ticksNotInRegion >= 20) {
+//            EthanApiPlugin.sendClientMessage("Not in correct region, stopping plugin");
+//            EthanApiPlugin.stopPlugin(this);
+//        }
         if (timeout > 0) {
             timeout--;
             return;
