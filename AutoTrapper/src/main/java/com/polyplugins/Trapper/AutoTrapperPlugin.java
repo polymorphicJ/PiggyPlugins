@@ -78,7 +78,7 @@ public class AutoTrapperPlugin extends Plugin {
         timeout = 0;
         started = false;
         startTile = null;
-
+        ticksNotInRegion = 0;
     }
 
     @Subscribe
