@@ -55,7 +55,7 @@ public class AutoCombatPlugin extends Plugin {
     @Inject
     private Client client;
     @Inject
-    private AutoCombatConfig config;
+    public AutoCombatConfig config;
     @Inject
     private AutoCombatOverlay overlay;
     @Inject
@@ -258,6 +258,7 @@ public class AutoCombatPlugin extends Plugin {
     public void onStatChanged(StatChanged event) {
         if (!started) return;
         if (client.getBoostedSkillLevel(Skill.HITPOINTS) <= config.eatAt()) {
+            log.info("should eat");
             handleEating();
         }
         if (config.usePrayerPotion()) {

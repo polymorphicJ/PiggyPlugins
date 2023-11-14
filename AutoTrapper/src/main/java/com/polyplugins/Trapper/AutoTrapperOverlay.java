@@ -13,6 +13,7 @@ import net.runelite.client.ui.overlay.components.PanelComponent;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.sound.sampled.Line;
 import java.awt.*;
 import java.util.Optional;
 
@@ -25,24 +26,46 @@ public class AutoTrapperOverlay extends Overlay {
     private AutoTrapperOverlay(Client client, AutoTrapperPlugin plugin) {
         this.client = client;
         this.plugin = plugin;
-        setPosition(OverlayPosition.ABOVE_CHATBOX_RIGHT);
+        setPosition(OverlayPosition.DYNAMIC);
         setLayer(OverlayLayer.ABOVE_SCENE);
+        setMovable(true);
         setDragTargetable(true);
 
     }
 
     @Override
     public Dimension render(Graphics2D graphics) {
+        if (plugin.startTile != null) {
+            TileObjects.search().filter(t -> plugin.startTile.distanceTo(t.getWorldLocation()) <= plugin.config.maxDist()).withName("Young tree").result().forEach(tree -> {
+                renderTile(graphics, LocalPoint.fromWorld(client, tree.getWorldLocation()),
+                        Color.GREEN, 2, new Color(0, 255, 0, 20));
+            });
+        } else {
+            TileObjects.search().withinDistance(plugin.config.maxDist()).withName("Young tree").result().forEach(tree -> {
+                renderTile(graphics, LocalPoint.fromWorld(client, tree.getWorldLocation()),
+                        Color.GREEN, 2, new Color(0, 255, 0, 20));
+            });
+        }
+
         panelComponent.getChildren().clear();
 
         LineComponent started = buildLine("Started: ", String.valueOf(plugin.started));
 
         LineComponent timeout = buildLine("Timeout: ", String.valueOf(plugin.timeout));
 
+        LineComponent maxTraps = buildLine("Max Traps: ", String.valueOf(plugin.maxTraps));
+
+        LineComponent traps = buildLine("Caught traps: ", String.valueOf(plugin.helper.getCaughtTraps()));
+
+        LineComponent trapSupplies = buildLine("Set traps: ", String.valueOf(plugin.helper.getSetTraps()));
+
         panelComponent.getChildren().add(timeout);
         panelComponent.getChildren().add(started);
-
-        return panelComponent.render(graphics);
+        panelComponent.getChildren().add(maxTraps);
+        panelComponent.getChildren().add(traps);
+        panelComponent.getChildren().add(trapSupplies);
+        panelComponent.render(graphics);
+        return null;
     }
 
     /**
@@ -61,19 +84,11 @@ public class AutoTrapperOverlay extends Overlay {
                 .build();
     }
 
-    private void renderTile(final Graphics2D graphics, final LocalPoint dest, final Color color, final Color fillColor, @Nullable String label) {
-        if (dest == null) {
-            return;
-        }
-        final Polygon poly = Perspective.getCanvasTilePoly(client, dest);
-        if (poly == null) {
-            return;
-        }
-        OverlayUtil.renderPolygon(graphics, poly, color, fillColor, new BasicStroke((float) 1.5));
-        if (!Strings.isNullOrEmpty(label)) {
-            Point canvasTextLocation = Perspective.getCanvasTextLocation(client, graphics, dest, label, 0);
-            if (canvasTextLocation != null) {
-                OverlayUtil.renderTextLocation(graphics, canvasTextLocation, label, color);
+    private void renderTile(Graphics2D graphics, LocalPoint dest, Color color, double borderWidth, Color fillColor) {
+        if (dest != null) {
+            Polygon poly = Perspective.getCanvasTilePoly(this.client, dest);
+            if (poly != null) {
+                OverlayUtil.renderPolygon(graphics, poly, color, fillColor, new BasicStroke((float) borderWidth));
             }
         }
     }

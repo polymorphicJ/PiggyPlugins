@@ -3,11 +3,12 @@ package com.piggyplugins.PiggyUtils.API;
 import com.example.EthanApiPlugin.Collections.NPCs;
 import com.example.EthanApiPlugin.Collections.query.NPCQuery;
 import com.google.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.Varbits;
 
-
+@Slf4j
 public class PlayerUtil {
     @Inject
     private Client client;
@@ -18,7 +19,7 @@ public class PlayerUtil {
      * @return
      */
     public int runEnergy() {
-        return client.getEnergy() * 100;
+        return client.getEnergy() / 100;
     }
 
     public boolean isStaminaActive() {
@@ -54,7 +55,7 @@ public class PlayerUtil {
      *
      * @return
      */
-    public int getTaskCount( ) {
+    public int getTaskCount() {
         return client.getVarpValue(VarPlayer.SLAYER_TASK_SIZE);
     }
 

@@ -38,12 +38,30 @@ public class Inventory {
         return getEmptySlots() == 0;
     }
 
+    /**
+     * Returns the number of stacks of this item, will return 1 on a stackable item
+     *
+     * @param itemId
+     * @return
+     */
     public static int getItemAmount(int itemId) {
         return search().withId(itemId).result().size();
     }
-
+    /**
+     * Returns the number of stacks of this item, will return 1 on a stackable item
+     *
+     * @param itemId
+     * @return
+     */
     public static int getItemAmount(String itemName) {
         return search().withName(itemName).result().size();
+    }
+    public static boolean contains(int itemId) {
+        return getItemAmount(itemId) > 0;
+    }
+
+    public static boolean contains(String itemName) {
+        return getItemAmount(itemName) > 0;
     }
 
     @Subscribe

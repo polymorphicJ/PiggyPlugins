@@ -1,14 +1,20 @@
 package com.polyplugins.Trapper;
 
 
+import com.example.EthanApiPlugin.Collections.Inventory;
+import com.example.EthanApiPlugin.Collections.TileItems;
+import com.example.EthanApiPlugin.Collections.TileObjects;
 import com.example.EthanApiPlugin.EthanApiPlugin;
+import com.example.InteractionApi.InventoryInteraction;
+import com.example.InteractionApi.TileObjectInteraction;
 import com.example.Packets.*;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import com.piggyplugins.PiggyUtils.API.PlayerUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
-import net.runelite.api.events.GameTick;
-import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.*;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -18,8 +24,11 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.HotkeyListener;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 @PluginDescriptor(
-        name = "AutoTrapper",
+        name = "<html><font color=\"#7ecbf2\">[PJ]</font>AutoTrapper</html>",
         description = "Traps shit",
         enabledByDefault = false,
         tags = {"poly", "plugin"}
@@ -29,7 +38,7 @@ public class AutoTrapperPlugin extends Plugin {
     @Inject
     private Client client;
     @Inject
-    private AutoTrapperConfig config;
+    public AutoTrapperConfig config;
     @Inject
     private AutoTrapperOverlay overlay;
     @Inject
@@ -38,8 +47,17 @@ public class AutoTrapperPlugin extends Plugin {
     private OverlayManager overlayManager;
     @Inject
     private ClientThread clientThread;
+    @Inject
+    private PlayerUtil playerUtil;
+    @Inject
+    public AutoTrapperHelper helper;
     public boolean started = false;
     public int timeout = 0;
+    public int maxTraps = 1;
+    public int ticksNotInRegion = 0;
+
+    public WorldPoint startTile = null;
+    Queue<WorldPoint> droppedSupplies = new LinkedList<>();
 
     @Provides
     private AutoTrapperConfig getConfig(ConfigManager configManager) {
@@ -58,31 +76,103 @@ public class AutoTrapperPlugin extends Plugin {
         keyManager.unregisterKeyListener(toggle);
         overlayManager.remove(overlay);
         timeout = 0;
+        started = false;
+        startTile = null;
+
+    }
+
+    @Subscribe
+    public void onGameStateChanged(GameStateChanged event) {
+        GameState state = event.getGameState();
+        if (state == GameState.HOPPING || state == GameState.LOGGED_IN) return;
+        EthanApiPlugin.stopPlugin(this);
+    }
+
+    @Subscribe
+    public void onItemSpawned(ItemSpawned event) {
+        if (client.getGameState() != GameState.LOGGED_IN || !started) {
+            return;
+        }
+        droppedSupplies.add(event.getTile().getWorldLocation());
     }
 
 
     @Subscribe
     private void onGameTick(GameTick event) {
+        if (client.getGameState() != GameState.LOGGED_IN || !started) {
+            return;
+        }
+        if (ticksNotInRegion >= 20) {
+            EthanApiPlugin.sendClientMessage("Not in correct region, stopping plugin");
+            EthanApiPlugin.stopPlugin(this);
+        }
         if (timeout > 0) {
             timeout--;
             return;
         }
-        if (client.getGameState() != GameState.LOGGED_IN || !started) {
+        if (startTile == null)
+            startTile = client.getLocalPlayer().getWorldLocation();
+        ticksNotInRegion = helper.inRegion(config.salamander().getRegionId()) ? 0 : ticksNotInRegion + 1;
+        maxTraps = helper.getMaxTraps();
+        dropSalamanders();
+        checkRunEnergy();
+
+        TileObjects.search().filter(t -> startTile.distanceTo(t.getWorldLocation()) <= config.maxDist())
+                .withName("Net trap").withAction("Check").nearestToPlayer().ifPresent(trap -> {
+                    TileObjectInteraction.interact(trap, "Check");
+                    timeout = 1 + config.tickDelay();
+                });
+
+        //this will eventually cause lost ropes and nets if another player is setting traps
+        //maybe do something ab this eventually
+        if (helper.getSetTraps() + helper.getCaughtTraps() >= maxTraps)
+            return;
+
+        TileObjects.search().filter(t -> startTile.distanceTo(t.getWorldLocation()) <= config.maxDist())
+                .withName("Young tree").withAction("Set-trap").nearestToPlayer().ifPresent(tree -> {
+                    if (helper.hasTrapSupplies()) {
+                        TileObjectInteraction.interact(tree, "Set-trap");
+                        timeout = 1 + config.tickDelay();
+                    }
+                });
+
+        if (!droppedSupplies.isEmpty()) {
+            WorldPoint point = droppedSupplies.peek();
+            TileItems.search().itemsMatchingWildcardsNoCase("small fishing net", "rope")
+                    .withinDistanceToPoint(1, point).first().ifPresentOrElse(item -> {
+                        item.interact(false);
+                        timeout = 1;
+                    }, () -> {
+                        droppedSupplies.remove();
+                    });
             return;
         }
+    }
 
+    public void dropSalamanders() {
+        Inventory.search().withName(config.salamander().getName()).withAction("Release").first().ifPresent(salamander -> {
+            InventoryInteraction.useItem(salamander, "Release");
+        });
     }
 
     private void checkRunEnergy() {
-        if (runIsOff() && client.getEnergy() >= 30 * 100) {
+        if (playerUtil.isRunning() && playerUtil.runEnergy() <= 10) {
             MousePackets.queueClickPacket();
             WidgetPackets.queueWidgetActionPacket(1, 10485787, -1, -1);
         }
+        checkStamina();
     }
 
-    private boolean runIsOff() {
-        return EthanApiPlugin.getClient().getVarpValue(173) == 0;
+    private void checkStamina() {
+        if (!playerUtil.isStaminaActive() && playerUtil.runEnergy() <= 60) {
+            Inventory.search().onlyUnnoted().nameContains("Stamina pot").withAction("Drink").first().ifPresent(stamina -> {
+                MousePackets.queueClickPacket();
+                WidgetPackets.queueWidgetAction(stamina, "Drink");
+                timeout = 1;
+            });
+        }
     }
+
 
     private final HotkeyListener toggle = new HotkeyListener(() -> config.toggle()) {
         @Override

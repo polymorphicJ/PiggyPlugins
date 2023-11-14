@@ -1,6 +1,7 @@
 package com.polyplugins.Trapper;
 
 
+import com.polyplugins.Trapper.data.Salamander;
 import net.runelite.client.config.*;
 
 @ConfigGroup("AutoTrapperConfig")
@@ -15,6 +16,26 @@ public interface AutoTrapperConfig extends Config {
         return Keybind.NOT_SET;
     }
 
+    @ConfigItem(
+            keyName = "salamanderType",
+            name = "Salamander",
+            description = "",
+            position = 1
+    )
+    default Salamander salamander() {
+        return Salamander.RED_SALAMANDER;
+    }
+
+    @ConfigItem(
+            keyName = "maxArea",
+            name = "Max dist",
+            description = "Max distance from start tile to set traps",
+            position = 2
+    )
+    default int maxDist() {
+        return 10;
+    }
+
     @ConfigSection(
             name = "Tick Delay",
             description = "",
@@ -26,7 +47,7 @@ public interface AutoTrapperConfig extends Config {
     @ConfigItem(
             name = "Tick Delay",
             keyName = "tickDelay",
-            description = "Slow down dialogue",
+            description = "Slow down plugin",
             position = 1,
             section = tickDelaySection
     )
