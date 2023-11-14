@@ -4,6 +4,7 @@ import com.example.EthanApiPlugin.Collections.Inventory;
 import com.example.EthanApiPlugin.Collections.NPCs;
 import com.example.EthanApiPlugin.Collections.TileObjects;
 import com.google.inject.Inject;
+import com.piggyplugins.PiggyUtils.API.PlayerUtil;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.Skill;
@@ -19,6 +20,8 @@ public class AutoTrapperHelper {
     private Client client;
     @Inject
     private ClientThread clientThread;
+    @Inject
+    private PlayerUtil playerUtil;
 
     public boolean inRegion(int regionId) {
         return client.getLocalPlayer().getWorldLocation().getRegionID() == regionId;
@@ -35,7 +38,7 @@ public class AutoTrapperHelper {
     }
 
     public boolean hasTrapSupplies() {
-        return Inventory.contains("Small fishing net") && Inventory.contains("Rope");
+        return playerUtil.hasItem("Small fishing net") && playerUtil.hasItem("Rope");
     }
 
     public int getMaxTraps() {

@@ -1,5 +1,6 @@
 package com.piggyplugins.PiggyUtils.API;
 
+import com.example.EthanApiPlugin.Collections.Inventory;
 import com.example.EthanApiPlugin.Collections.NPCs;
 import com.example.EthanApiPlugin.Collections.query.NPCQuery;
 import com.google.inject.Inject;
@@ -12,6 +13,14 @@ import net.runelite.api.Varbits;
 public class PlayerUtil {
     @Inject
     private Client client;
+
+    public boolean hasItem(String name) {
+        return Inventory.getItemAmount(name) > 0;
+    }
+
+    public boolean hasItem(int id) {
+        return Inventory.getItemAmount(id) > 0;
+    }
 
     /**
      * Run energy the way we'd use it
