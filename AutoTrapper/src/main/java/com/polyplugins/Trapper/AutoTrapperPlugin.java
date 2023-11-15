@@ -42,6 +42,8 @@ public class AutoTrapperPlugin extends Plugin {
     @Inject
     private AutoTrapperOverlay overlay;
     @Inject
+    private TrapTileOverlay trapTileOverlay;
+    @Inject
     private KeyManager keyManager;
     @Inject
     private OverlayManager overlayManager;
@@ -68,6 +70,7 @@ public class AutoTrapperPlugin extends Plugin {
     protected void startUp() throws Exception {
         keyManager.registerKeyListener(toggle);
         overlayManager.add(overlay);
+        overlayManager.add(trapTileOverlay);
         timeout = 0;
     }
 
@@ -75,6 +78,7 @@ public class AutoTrapperPlugin extends Plugin {
     protected void shutDown() throws Exception {
         keyManager.unregisterKeyListener(toggle);
         overlayManager.remove(overlay);
+        overlayManager.remove(trapTileOverlay);
         timeout = 0;
         started = false;
         startTile = null;
