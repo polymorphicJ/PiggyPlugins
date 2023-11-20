@@ -2,17 +2,42 @@ package com.piggyplugins.PiggyUtils.API;
 
 import com.example.EthanApiPlugin.Collections.Inventory;
 import com.example.EthanApiPlugin.Collections.NPCs;
+import com.example.EthanApiPlugin.Collections.Players;
 import com.example.EthanApiPlugin.Collections.query.NPCQuery;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.Varbits;
+import net.runelite.api.coords.WorldArea;
 
 @Slf4j
 public class PlayerUtil {
     @Inject
     private Client client;
+
+    public boolean inArea(WorldArea area) {
+        return area.contains(client.getLocalPlayer().getWorldLocation());
+    }
+
+    public boolean inRegion(int region) {
+        return client.getLocalPlayer().getWorldLocation().getRegionID() == region;
+    }
+
+    /**
+     * Checks if the player is in any of the given regions
+     *
+     * @param regions
+     * @return
+     */
+    public boolean inRegion(int... regions) {
+        for (int region : regions) {
+            if (inRegion(region)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public boolean hasItem(String name) {
         return Inventory.getItemAmount(name) > 0;
