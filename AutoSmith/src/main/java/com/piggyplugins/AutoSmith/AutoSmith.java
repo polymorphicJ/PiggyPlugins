@@ -66,7 +66,6 @@ public class AutoSmith extends Plugin {
         isSmithing = false;
         keyManager.registerKeyListener(toggle);
         log.info(config.bar().getName() + " - " + config.item().toString());
-
     }
 
     @Override
