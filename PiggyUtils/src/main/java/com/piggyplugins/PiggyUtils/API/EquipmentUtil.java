@@ -7,7 +7,19 @@ public class EquipmentUtil {
         return Equipment.search().nameContainsNoCase(name).first().isPresent();
     }
 
-    public static boolean hasItems(String ...names) {
+
+    public static boolean hasAnyItems(String... names) {
+        for (String name : names) {
+            if (hasItem(name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Deprecated
+    public static boolean hasItems(String... names) {
         for (String name : names) {
             if (!hasItem(name)) {
                 return false;

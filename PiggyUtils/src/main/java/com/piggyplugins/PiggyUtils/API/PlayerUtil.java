@@ -7,6 +7,7 @@ import com.example.EthanApiPlugin.Collections.query.NPCQuery;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.Skill;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.Varbits;
 import net.runelite.api.coords.WorldArea;
@@ -55,6 +56,11 @@ public class PlayerUtil {
     public int runEnergy() {
         return client.getEnergy() / 100;
     }
+
+    public int hp() {
+        return client.getBoostedSkillLevel(Skill.HITPOINTS);
+    }
+
 
     public boolean isStaminaActive() {
         return client.getVarbitValue(Varbits.RUN_SLOWED_DEPLETION_ACTIVE) == 1;
