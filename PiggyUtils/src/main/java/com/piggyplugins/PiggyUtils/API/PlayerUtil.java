@@ -49,12 +49,20 @@ public class PlayerUtil {
     }
 
     /**
-     * Run energy the way we'd use it
+     * Run energy the way we read it
      *
      * @return
      */
     public int runEnergy() {
         return client.getEnergy() / 100;
+    }
+
+    /**
+     * Spec energy the way we read it
+     * @return
+     */
+    public int specEnergy() {
+        return client.getVarpValue(VarPlayer.SPECIAL_ATTACK_PERCENT) / 10;
     }
 
     public int hp() {
