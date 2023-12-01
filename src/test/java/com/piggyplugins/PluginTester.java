@@ -3,7 +3,6 @@ package com.piggyplugins;
 import com.example.EthanApiPlugin.EthanApiPlugin;
 import com.example.PacketUtils.PacketUtilsPlugin;
 import com.piggyplugins.AutoAerial.AutoAerialPlugin;
-import com.piggyplugins.AutoSmith.AutoSmith;
 import com.piggyplugins.Firemaking.FiremakingPlugin;
 import com.piggyplugins.PowerSkiller.PowerSkillerPlugin;
 import com.piggyplugins.SpeedDartMaker.SpeedDartMakerPlugin;
