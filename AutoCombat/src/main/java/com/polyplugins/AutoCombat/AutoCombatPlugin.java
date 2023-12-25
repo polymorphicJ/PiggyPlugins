@@ -20,6 +20,7 @@ import com.polyplugins.AutoCombat.util.SuppliesUtil;
 import com.polyplugins.AutoCombat.util.Util;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
@@ -175,7 +176,7 @@ public class AutoCombatPlugin extends Plugin {
         if (!lootQueue.isEmpty()) {
             looting = true;
             ItemStack itemStack = lootQueue.peek();
-            TileItems.search().withId(itemStack.getId()).first().ifPresent(item -> {
+            TileItems.search().withId(itemStack.getId()).nearestToPoint(WorldPoint.fromLocal(client, itemStack.getLocation())).ifPresent(item -> {
 //                log.info("Looting: " + item.getTileItem().getId());
                 ItemComposition comp = itemManager.getItemComposition(item.getTileItem().getId());
                 if (comp.isStackable() || comp.getNote() != -1) {
@@ -291,16 +292,17 @@ public class AutoCombatPlugin extends Plugin {
         int pid = event.getVarpId();
         if (pid == VarPlayer.SLAYER_TASK_SIZE) {
             if (event.getValue() <= 0 && config.shutdownOnTaskDone()) {
-                InventoryInteraction.useItem(supplies.findTeleport(), "Break");
+//                InventoryInteraction.useItem(supplies.findTeleport(), "Break");
                 EthanApiPlugin.sendClientMessage("Task done, stopping");
                 resetEverything();
             }
-        } else if (pid == VarPlayer.CANNON_AMMO) {
-            if (event.getValue() <= ThreadLocalRandom.current().nextInt(4, 12)) {
-                reloadCannon();
-                timeout = 1;
-            }
         }
+//        } else if (pid == VarPlayer.CANNON_AMMO) {
+//            if (event.getValue() <= ThreadLocalRandom.current().nextInt(4, 12)) {
+//                reloadCannon();
+//                timeout = 1;
+//            }
+//        }
     }
 
     @Subscribe
