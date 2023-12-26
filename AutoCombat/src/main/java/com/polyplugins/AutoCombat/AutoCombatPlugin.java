@@ -180,17 +180,17 @@ public class AutoCombatPlugin extends Plugin {
         if (lootTile != null) {
             looting = true;
             List<ETileItem> eItems = TileItems.search().filter(ti -> ti.getLocation().distanceTo(lootTile) == 0).result();
-            if(eItems==null) return;
+            if (eItems == null) return;
             for (ETileItem eit : eItems) {
                 ItemComposition comp = itemManager.getItemComposition(eit.getTileItem().getId());
                 if (!lootHelper.getLootNames().contains(comp.getName())) {
-                    log.info("removing " + comp.getName() + " size - "+ eItems.size());
+                    log.info("removing " + comp.getName() + " size - " + eItems.size());
                     eItems.remove(eit);
                     break;
                 }
             }
             if (eItems.isEmpty()) {
-                log.info("empty, resetting");
+                log.info("empty loot, resetting");
                 lootTile = null;
                 looting = false;
                 return;
@@ -198,12 +198,12 @@ public class AutoCombatPlugin extends Plugin {
 //            while (!eItems.isEmpty()) {
             ETileItem eItem = eItems.get(0);
             ItemComposition comp = itemManager.getItemComposition(eItem.getTileItem().getId());
-            log.info("r0");
+//            log.info("r0");
             if (!lootHelper.getLootNames().contains(comp.getName())) {
                 eItems.remove(eItem);
 //                continue;
             }
-            log.info("r1");
+//            log.info("r1");
 //                if (EthanApiPlugin.isMoving()) return;
             if (comp.isStackable() || comp.getNote() != -1) {
                 if (Inventory.full() && Inventory.getItemAmount(eItem.getTileItem().getId()) > 0) {
