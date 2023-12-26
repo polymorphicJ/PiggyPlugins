@@ -1,19 +1,27 @@
 package com.piggyplugins.CannonReloader;
 
+import com.example.EthanApiPlugin.Collections.Bank;
 import com.example.EthanApiPlugin.Collections.Inventory;
+import com.example.EthanApiPlugin.Collections.NPCs;
 import com.example.EthanApiPlugin.Collections.TileObjects;
 import com.example.EthanApiPlugin.EthanApiPlugin;
+import com.example.InteractionApi.BankInteraction;
 import com.example.InteractionApi.InventoryInteraction;
+import com.example.InteractionApi.NPCInteraction;
 import com.example.InteractionApi.TileObjectInteraction;
 import com.example.Packets.MousePackets;
 import com.example.Packets.MovementPackets;
+import com.example.Packets.WidgetPackets;
 import com.google.inject.Provides;
+import com.piggyplugins.PiggyUtils.API.InventoryUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -214,11 +222,6 @@ public class CannonReloaderPlugin extends Plugin {
                 TileObjectInteraction.interact(x, "Pick-up");
             });
         }
-    }
-
-    private WorldPoint getCoords(String coords) {
-        List<Integer> configCoords = Arrays.stream(coords.split(",")).map(Integer::parseInt).collect(Collectors.toList());
-        return new WorldPoint(configCoords.get(0), configCoords.get(1), client.getLocalPlayer().getWorldLocation().getPlane());
     }
 
     @Subscribe
