@@ -53,6 +53,7 @@ import net.runelite.api.events.ItemDespawned;
 import net.runelite.api.events.ItemSpawned;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -105,6 +106,8 @@ public class RuneDragonsPlugin extends Plugin {
     @Inject
     private Client client;
     @Inject
+    private ClientThread clientThread;
+    @Inject
     private RuneDragonsConfig config;
     @Inject
     private KeyManager keyManager;
@@ -115,9 +118,10 @@ public class RuneDragonsPlugin extends Plugin {
 
     @Override
     protected void startUp() throws Exception {
-        NPCs.search().withName("Rock crab").filter(n->{
-            return n.getInteracting()!=null && n.getInteracting().equals(client.getLocalPlayer());
-        }).first().isPresent();
+        clientThread.invoke(()->{
+           EthanApiPlugin.sendClientMessage("[Runedragons] THIS PLUGIN IS QUIRKY!");
+            EthanApiPlugin.sendClientMessage("[Runedragons] VISIT THE PIGGY GITHUB PAGE FOR THIS PLUGIN FOR THE README");
+        });
     }
 
     @Override
