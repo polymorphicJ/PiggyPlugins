@@ -115,6 +115,8 @@ public class RuneDragonsPlugin extends Plugin {
     private OverlayManager overlayManager;
     @Inject
     private RuneDragonsOverlay runeDragonsOverlay;
+    @Inject
+    private RuneDragonsTileOverlay runeDragonsTileOverlay;
 
     @Inject
     public PlayerUtil playerUtil;
@@ -529,6 +531,7 @@ public class RuneDragonsPlugin extends Plugin {
         }
         if (config.startButton() && !started) {
             overlayManager.add(runeDragonsOverlay);
+            overlayManager.add(runeDragonsTileOverlay);
             initInventory();
             timer = Instant.now();
             started = true;
@@ -551,6 +554,7 @@ public class RuneDragonsPlugin extends Plugin {
     private void resetPlugin() {
         started = false;
         overlayManager.remove(runeDragonsOverlay);
+        overlayManager.remove(runeDragonsTileOverlay);
         inventorySetup.clear();
         itemsToLoot.clear();
         timer = null;
