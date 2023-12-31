@@ -116,16 +116,21 @@ public class RuneDragonsPlugin extends Plugin {
     @Inject
     private RuneDragonsOverlay runeDragonsOverlay;
 
+    @Inject
+    public PlayerUtil playerUtil;
+
     @Override
     protected void startUp() throws Exception {
-        clientThread.invoke(()->{
-           EthanApiPlugin.sendClientMessage("[Runedragons] THIS PLUGIN IS QUIRKY!");
-            EthanApiPlugin.sendClientMessage("[Runedragons] VISIT THE PIGGY GITHUB PAGE FOR THIS PLUGIN FOR THE README");
+        clientThread.invoke(() -> {
+            EthanApiPlugin.sendClientMessage("[RuneDragons] THIS PLUGIN IS QUIRKY!");
+            EthanApiPlugin.sendClientMessage("[RuneDragons] VISIT THE PIGGY GITHUB PAGE FOR THIS PLUGIN FOR THE README");
         });
     }
 
     @Override
     protected void shutDown() throws Exception {
+        timeout = 0;
+        resetPlugin();
     }
 
     @Provides
@@ -138,6 +143,11 @@ public class RuneDragonsPlugin extends Plugin {
     private void onGameTick(GameTick event) {
         if (!EthanApiPlugin.loggedIn() || !started) {
             // We do an early return if the user isn't logged in\
+            return;
+        }
+        if (!playerUtil.isAutoRetaliating()) {
+            EthanApiPlugin.sendClientMessage("[RuneDragons]TURN ON AUTO RETALIATE");
+            EthanApiPlugin.stopPlugin(this);
             return;
         }
         player = client.getLocalPlayer();
@@ -366,6 +376,7 @@ public class RuneDragonsPlugin extends Plugin {
     }
 
     private SubState getCurrentSubState() {
+
         if (state == State.CONSUME) {
             if (inLithkren()) {
                 if (!client.isPrayerActive(Prayer.PROTECT_FROM_MAGIC) || !client.isPrayerActive(Prayer.PIETY)) {
@@ -396,14 +407,17 @@ public class RuneDragonsPlugin extends Plugin {
                 if (currentNPC != player.getInteracting()) {
                     currentNPC = (NPC) player.getInteracting();
                     if (currentNPC != null) {
+                        log.info("attack dragon state 1");
                         return SubState.ATTACK_DRAGON;
                     }
                 }
             }
             if (currentNPC == null) {
+                log.info("attack dragon, currentNPC is null");
                 currentNPC = NPCs.search().alive().withName("Rune dragon").filter(npc ->
                         npc.getInteracting() == null && npc.getHealthRatio() != 0).nearestToPlayer().orElse(null);
                 if (currentNPC != null) {
+                    log.info("attack dragon state 2");
                     return SubState.ATTACK_DRAGON;
                 }
             }
@@ -543,6 +557,7 @@ public class RuneDragonsPlugin extends Plugin {
         currentNPC = null;
         timeout = 0;
         deposited = false;
+
     }
 
     protected int tickDelay() {
@@ -940,6 +955,7 @@ public class RuneDragonsPlugin extends Plugin {
     }
 
     private void attackDragon() {
+        log.info("attack dragon called");
         NPCInteraction.interact(currentNPC, "Attack");
         timeout = tickDelay();
     }
