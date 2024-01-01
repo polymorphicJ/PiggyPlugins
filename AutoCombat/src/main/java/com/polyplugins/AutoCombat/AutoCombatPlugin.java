@@ -131,6 +131,8 @@ public class AutoCombatPlugin extends Plugin {
         isSlayerNpc = false;
     }
 
+    List<ETileItem> eItems = new ArrayList<>();
+
     @Subscribe
     private void onGameTick(GameTick event) {
         player = client.getLocalPlayer();
@@ -177,80 +179,82 @@ public class AutoCombatPlugin extends Plugin {
         hasCombatPot = supplies.findCombatPotion() != null;
         hasBones = supplies.findBone() != null;
 
-        if (lootTile != null) {
-            looting = true;
-            List<ETileItem> eItems = TileItems.search().filter(ti -> ti.getLocation().distanceTo(lootTile) == 0).result();
-            if (eItems == null) return;
-            for (ETileItem eit : eItems) {
-                ItemComposition comp = itemManager.getItemComposition(eit.getTileItem().getId());
-                if (!lootHelper.getLootNames().contains(comp.getName())) {
-                    log.info("removing " + comp.getName() + " size - " + eItems.size());
-                    eItems.remove(eit);
-                    break;
-                }
-            }
-            if (eItems.isEmpty()) {
-                log.info("empty loot, resetting");
-                lootTile = null;
-                looting = false;
-                return;
-            }
-//            while (!eItems.isEmpty()) {
-            ETileItem eItem = eItems.get(0);
-            ItemComposition comp = itemManager.getItemComposition(eItem.getTileItem().getId());
-//            log.info("r0");
-            if (!lootHelper.getLootNames().contains(comp.getName())) {
-                eItems.remove(eItem);
-//                continue;
-            }
-//            log.info("r1");
-//                if (EthanApiPlugin.isMoving()) return;
-            if (comp.isStackable() || comp.getNote() != -1) {
-                if (Inventory.full() && Inventory.getItemAmount(eItem.getTileItem().getId()) > 0) {
-                    eItem.interact(false);
-                } else if (!Inventory.full()) {
-                    EthanApiPlugin.sendClientMessage("Looting stackable: " + comp.getName() + " " + client.getTickCount());
-                    eItem.interact(false);
-                }
-            } else {
-                if (!Inventory.full()) {
-                    EthanApiPlugin.sendClientMessage("Looting: " + comp.getName() + " " + client.getTickCount());
-                    eItem.interact(false);
-                }
-            }
-            eItems.remove(eItem);
+//        if (lootTile != null) {
+//            looting = true;
+//          eItems = TileItems.search().filter(ti -> ti.getLocation().distanceTo(lootTile) == 0)..result();
+//            if (eItems == null) return;
+//            for (ETileItem eit : eItems) {
+//                ItemComposition comp = itemManager.getItemComposition(eit.getTileItem().getId());
+//                if (!lootHelper.getLootNames().contains(comp.getName())) {
+//                    log.info("removing " + comp.getName() + " size - " + eItems.size());
+//                    eItems.remove(eit);
+////                    continue;
+//                }
 //            }
+//            if (eItems.isEmpty()) {
+//                log.info("empty loot, resetting");
+//                lootTile = null;
+//                looting = false;
+//                return;
+//            }
+////            while (!eItems.isEmpty()) {
+//            ETileItem eItem = eItems.get(0);
+//            ItemComposition comp = itemManager.getItemComposition(eItem.getTileItem().getId());
+//            log.info("r0");
+//            if (!lootHelper.getLootNames().contains(comp.getName())) {
+//                eItems.remove(eItem);
+////                return;
+////                continue;
+//            }
+//            log.info("r1");
+////                if (EthanApiPlugin.isMoving()) return;
+//            if (comp.isStackable() || comp.getNote() != -1) {
+//                if (Inventory.full() && Inventory.getItemAmount(eItem.getTileItem().getId()) > 0) {
+//                    eItem.interact(false);
+//                } else if (!Inventory.full()) {
+//                    EthanApiPlugin.sendClientMessage("Looting stackable: " + comp.getName() + " " + client.getTickCount());
+//                    eItem.interact(false);
+//                }
+//            } else {
+//                if (!Inventory.full()) {
+//                    EthanApiPlugin.sendClientMessage("Looting: " + comp.getName() + " " + client.getTickCount());
+//                    eItem.interact(false);
+//                }
+//            }
+//            eItems.remove(eItem);
+////            }
+//            return;
+//        }
+
+        if (!lootQueue.isEmpty()) {
+            looting = true;
+            ItemStack itemStack = lootQueue.peek();
+            TileItems.search().withId(itemStack.getId()).filter(ti -> ti.getLocation().distanceTo(lootTile) == 0).first().ifPresent(item -> {
+                ItemComposition comp = itemManager.getItemComposition(item.getTileItem().getId());
+                log.info("Looting: " + comp.getName());
+                if (comp.isStackable() || comp.getNote() != -1) {
+                    log.info("stackable loot " + comp.getName());
+                    if (lootHelper.hasStackableLoot(comp)) {
+                        log.info("Has stackable loot");
+                        item.interact(false);
+                    }
+                }
+                if (!Inventory.full()) {
+                    item.interact(false);
+                } else {
+                    EthanApiPlugin.sendClientMessage("Inventory full, stopping. May handle in future update");
+                    EthanApiPlugin.stopPlugin(this);
+                }
+            });
+            timeout = 3;
+            lootQueue.remove();
             return;
         }
-
-//        if (!lootQueue.isEmpty()) {
-//            looting = true;
-//            ItemStack itemStack = lootQueue.peek();
-//            TileItems.search().withId(itemStack.getId()).nearestToPoint(WorldPoint.fromLocal(client, itemStack.getLocation())).ifPresent(item -> {
-////                log.info("Looting: " + item.getTileItem().getId());
-//                ItemComposition comp = itemManager.getItemComposition(item.getTileItem().getId());
-//                if (comp.isStackable() || comp.getNote() != -1) {
-////                    log.info("stackable loot " + comp.getName());
-//                    if (lootHelper.hasStackableLoot(comp)) {
-////                        log.info("Has stackable loot");
-//                        item.interact(false);
-//                    }
-//                }
-//                if (!Inventory.full()) {
-//                    item.interact(false);
-//                } else {
-//                    EthanApiPlugin.sendClientMessage("Inventory full, stopping. May handle in future update");
-//                    EthanApiPlugin.stopPlugin(this);
-//                }
-//            });
-//            timeout = 3;
-//            lootQueue.remove();
-//            return;
-//        }
-//        if (playerUtil.isInteracting() || looting) {
-//            timeout = 6;
-//            return;
-//        }
+        if (lootTile != null) lootTile = null;
+        if (playerUtil.isInteracting() || looting) {
+            timeout = 2;
+            return;
+        }
         targetNpc = util.findNpc(config.targetName());
         if (targetNpc == null && isSlayerNpc && !slayerInfo.getDisturbAction().isEmpty()) {
             Optional<NPC> disturbNpc = NPCs.search().withName(slayerInfo.getUndisturbedName()).first();
