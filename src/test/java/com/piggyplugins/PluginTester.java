@@ -19,6 +19,7 @@ import com.polyplugins.Butterfly.ButterflyPlugin;
 import com.polyplugins.Chompy.AutoChompyPlugin;
 import com.polyplugins.Dialogue.DialogueContinuerPlugin;
 import com.polyplugins.KittenFeeder.KittenFeederPlugin;
+import com.polyplugins.OneClickBlackjack.OneClickBlackjackPlugin;
 import com.polyplugins.Trapper.AutoTrapperPlugin;
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
@@ -31,7 +32,8 @@ public class PluginTester {
 //                KittenFeederPlugin.class, AutoChompyPlugin.class, PowerSkillerPlugin.class, AutoTrapperPlugin.class,
 //                SpeedDartMakerPlugin.class, RooftopAgilityPlugin.class, UpkeepPlugin.class, PvpHelperPlugin.class, CannonReloaderPlugin.class);
         ExternalPluginManager.loadBuiltin(EthanApiPlugin.class, PacketUtilsPlugin.class,
-                RuneDragonsPlugin.class, PiggyUtilsPlugin.class, AutoCombatPlugin.class, AutoTrapperPlugin.class, AutoTitheFarmPlugin.class);
+                RuneDragonsPlugin.class, PiggyUtilsPlugin.class, AutoCombatPlugin.class, AutoTrapperPlugin.class,
+                AutoTitheFarmPlugin.class, OneClickBlackjackPlugin.class);
         RuneLite.main(args);
     }
 }

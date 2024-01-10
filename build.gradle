@@ -52,6 +52,10 @@ dependencies {
     compileOnly project(path: ':AutoSmith')
     testImplementation project(path: ':AutoSmith')
 
+
+    compileOnly project(path: ':OneClickBlackjack')
+    testImplementation project(path: ':OneClickBlackjack')
+
     compileOnly project(path: ':AutoAerial')
     testImplementation project(path: ':AutoAerial')
 
