@@ -232,7 +232,7 @@ public class AutoCombatPlugin extends Plugin {
             TileItems.search().withId(itemStack.getId()).filter(ti -> ti.getLocation().distanceTo(lootTile) == 0).first().ifPresent(item -> {
                 ItemComposition comp = itemManager.getItemComposition(item.getTileItem().getId());
                 log.info("Looting: " + comp.getName());
-                if (comp.isStackable() || comp.getNote() != -1) {
+            if (comp.isStackable() || comp.getNote() != -1) {
                     log.info("stackable loot " + comp.getName());
                     if (lootHelper.hasStackableLoot(comp)) {
                         log.info("Has stackable loot");
@@ -305,9 +305,6 @@ public class AutoCombatPlugin extends Plugin {
     public void onNpcLootReceived(NpcLootReceived event) {
         if (!started || !config.lootEnabled()) return;
         Collection<ItemStack> items = event.getItems();
-        items.stream().findFirst().ifPresent(it -> {
-            lootTile = WorldPoint.fromLocal(client, it.getLocation());
-        });
         items.stream().filter(item -> {
             ItemComposition comp = itemManager.getItemComposition(item.getId());
             return lootHelper.getLootNames().contains(comp.getName());
