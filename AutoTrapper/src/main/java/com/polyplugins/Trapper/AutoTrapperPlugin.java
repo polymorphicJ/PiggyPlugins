@@ -119,7 +119,7 @@ public class AutoTrapperPlugin extends Plugin {
             startTile = client.getLocalPlayer().getWorldLocation();
         ticksNotInRegion = helper.inRegion(config.salamander().getRegionId()) ? 0 : ticksNotInRegion + 1;
         maxTraps = helper.getMaxTraps();
-        if (config.salamander() == Salamander.BLACK_SALAMANDER) maxTraps++;
+        if (config.salamander() == Salamander.BLACK_SALAMANDER) maxTraps++; //+1 for wildy
         dropSalamanders();
         checkRunEnergy();
 
