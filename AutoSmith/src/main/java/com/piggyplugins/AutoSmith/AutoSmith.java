@@ -155,10 +155,10 @@ public class AutoSmith extends Plugin {
         if (!Bank.isOpen()) {
             if (banker.isPresent()) {
                 NPCInteraction.interact(banker.get(), "Bank");
-                timeout = config.tickDelay();
+                timeout = config.tickDelay() == 0 ? 1 : config.tickDelay();
             } else if (bank.isPresent()) {
                 TileObjectInteraction.interact(bank.get(), "Bank");
-                timeout = config.tickDelay();
+                timeout = config.tickDelay() == 0 ? 1 : config.tickDelay();
             } else {
                 client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Couldn't find bank or banker", null);
                 EthanApiPlugin.stopPlugin(this);
