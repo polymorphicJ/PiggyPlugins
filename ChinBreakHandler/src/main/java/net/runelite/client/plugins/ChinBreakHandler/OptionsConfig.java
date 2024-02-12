@@ -1,4 +1,4 @@
-package com.piggyplugins.ChinBreakHandler;
+package net.runelite.client.plugins.ChinBreakHandler;
 
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
@@ -24,6 +24,17 @@ public interface OptionsConfig extends Config {
     default int stopAfterBreaks()
     {
         return 0;
+    }
+
+    @ConfigItem(
+            keyName = "autoLoginOnDisconnect",
+            name = "Auto Login",
+            description = "Will automatically log you in if you disconnect while a break is planned",
+            position = 2,
+            section = misc
+    )
+    default boolean autoLoginOnDisconnect() {
+        return true;
     }
 
     @ConfigSection(
