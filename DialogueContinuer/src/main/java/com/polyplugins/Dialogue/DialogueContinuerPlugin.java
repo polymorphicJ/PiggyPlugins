@@ -62,7 +62,6 @@ public class DialogueContinuerPlugin extends Plugin {
             timeout = 0;
         });
         Widgets.search().withTextContains("Click here to continue").first().ifPresent(widget -> {
-
             MousePackets.queueClickPacket();
             WidgetPackets.queueResumePause(widget.getId(), -1);
             timeout = 0;

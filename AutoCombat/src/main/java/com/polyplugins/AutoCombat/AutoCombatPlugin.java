@@ -162,7 +162,7 @@ public class AutoCombatPlugin extends Plugin {
             timeout = 1;
         });
 
-//        if (lootQueue.isEmpty()) looting = false;
+        if (lootQueue.isEmpty()) looting = false;
         if (lootTile == null) looting = false;
         checkRunEnergy();
         hasFood = supplies.findFood() != null;
@@ -299,6 +299,8 @@ public class AutoCombatPlugin extends Plugin {
             timeout = 1;
         }
     }
+
+
 
     @Subscribe
     public void onNpcLootReceived(NpcLootReceived event) {

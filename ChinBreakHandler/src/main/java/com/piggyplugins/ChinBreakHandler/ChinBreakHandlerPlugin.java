@@ -625,6 +625,7 @@ public class ChinBreakHandlerPlugin extends Plugin {
     @SuppressWarnings("SameParameterValue")
     private void sendKey(int key)
     {
+
         keyEvent(KeyEvent.KEY_PRESSED, key);
         keyEvent(KeyEvent.KEY_RELEASED, key);
     }
