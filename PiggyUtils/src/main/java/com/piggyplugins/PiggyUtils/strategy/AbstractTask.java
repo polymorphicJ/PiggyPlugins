@@ -22,15 +22,12 @@ import net.runelite.client.plugins.Plugin;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public abstract class AbstractTask<T extends Plugin> implements TaskInterface {
-    @Inject
-    protected Client client;
-    @Inject
-    protected ClientThread clientThread;
-    protected T plugin;
-    protected Config config;
+public abstract class AbstractTask<T extends Plugin, V extends Config> implements TaskInterface {
 
-    public AbstractTask(T plugin, Config config) {
+    protected T plugin;
+    protected V config;
+
+    public AbstractTask(T plugin, V config) {
         this.plugin = plugin;
         this.config = config;
     }

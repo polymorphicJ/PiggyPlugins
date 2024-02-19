@@ -36,10 +36,14 @@ public class StrategySmithOverlay extends Overlay {
         panelComponent.getChildren().clear();
 
         LineComponent timeout = buildLine("Timeout: ", String.valueOf(plugin.timeout));
+        LineComponent idleTicks = buildLine("Idle Ticks: ", String.valueOf(plugin.idleTicks));
+        LineComponent started = buildLine("Started: ", String.valueOf(plugin.started));
 
+        panelComponent.getChildren().add(started);
         panelComponent.getChildren().add(timeout);
+        panelComponent.getChildren().add(idleTicks);
 
-        return null;
+        return panelComponent.render(graphics);
     }
 
     /**

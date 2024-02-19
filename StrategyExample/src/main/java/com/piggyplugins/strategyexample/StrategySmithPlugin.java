@@ -7,10 +7,14 @@ import com.example.Packets.*;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.piggyplugins.PiggyUtils.API.InventoryUtil;
+import com.piggyplugins.PiggyUtils.API.PlayerUtil;
 import com.piggyplugins.PiggyUtils.strategy.AbstractTask;
 import com.piggyplugins.PiggyUtils.strategy.TaskManager;
 import com.piggyplugins.strategyexample.tasks.Banking;
+import com.piggyplugins.strategyexample.tasks.DoSmithing;
+import com.piggyplugins.strategyexample.tasks.OpenAnvil;
 import com.piggyplugins.strategyexample.tasks.OpenBank;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.GameTick;
@@ -33,6 +37,7 @@ import net.runelite.client.util.HotkeyListener;
 @Slf4j
 public class StrategySmithPlugin extends Plugin {
     @Inject
+    @Getter
     private Client client;
     @Inject
     private StrategySmithConfig config;
@@ -43,10 +48,15 @@ public class StrategySmithPlugin extends Plugin {
     @Inject
     private OverlayManager overlayManager;
     @Inject
+    @Getter
     private ClientThread clientThread;
     public boolean started = false;
     public int timeout = 0;
     public TaskManager taskManager = new TaskManager();
+    public boolean isSmithing;
+    public int idleTicks = 0;
+    @Inject
+    PlayerUtil playerUtil;
 
     @Provides
     private StrategySmithConfig getConfig(ConfigManager configManager) {
@@ -55,16 +65,21 @@ public class StrategySmithPlugin extends Plugin {
 
     @Override
     protected void startUp() throws Exception {
-        keyManager.registerKeyListener(toggle);
         overlayManager.add(overlay);
         timeout = 0;
+        isSmithing = false;
+        keyManager.registerKeyListener(toggle);
+        log.info(config.bar().getName() + " - " + config.item().toString());
     }
 
     @Override
     protected void shutDown() throws Exception {
+        isSmithing = false;
+        timeout = 0;
+        idleTicks = 0;
+        started = false;
         keyManager.unregisterKeyListener(toggle);
         overlayManager.remove(overlay);
-        timeout = 0;
     }
 
 
@@ -74,10 +89,31 @@ public class StrategySmithPlugin extends Plugin {
             return;
         }
 
+        if (playerUtil.isInteracting() || client.getLocalPlayer().getAnimation() == -1) {
+            idleTicks++;
+        } else {
+            idleTicks = 0;
+        }
+
         if (timeout > 0) {
             timeout--;
+            if (idleTicks > 10 || !hasEnoughBars()) {
+                timeout = 0;
+                isSmithing = false;
+            }
             return;
         }
+
+
+        if (isSmithing) {
+            if (!hasEnoughBars()) {
+                isSmithing = false;
+            }
+            if (hasEnoughBars())
+                return;
+        }
+
+        checkRunEnergy();
         if (taskManager.hasTasks()) {
             for (AbstractTask t : taskManager.getTasks()) {
                 if (t.validate()) {
@@ -87,6 +123,10 @@ public class StrategySmithPlugin extends Plugin {
             }
         }
 
+    }
+
+    public boolean hasHammer() {
+        return !Inventory.search().nameContains("Hammer").empty();
     }
 
     public boolean hasBarsButNotEnough() {
@@ -123,6 +163,8 @@ public class StrategySmithPlugin extends Plugin {
         if (started) {
             taskManager.addTask(new OpenBank(this, config));
             taskManager.addTask(new Banking(this, config));
+            taskManager.addTask(new OpenAnvil(this, config));
+            taskManager.addTask(new DoSmithing(this, config));
         } else {
             taskManager.clearTasks();
         }
