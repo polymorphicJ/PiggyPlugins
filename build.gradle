@@ -121,6 +121,9 @@ dependencies {
     compileOnly project(path: ':PowerSkiller')
     testImplementation project(path: ':PowerSkiller')
 
+    compileOnly project(path: ':StrategyExample')
+    testImplementation project(path: ':StrategyExample')
+
 }
 
 sourceSets {

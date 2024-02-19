@@ -11,6 +11,7 @@ import com.piggyplugins.OneTickSwitcher.PvpHelperPlugin;
 import com.piggyplugins.PowerSkiller.PowerSkillerPlugin;
 import com.piggyplugins.RooftopAgility.RooftopAgilityPlugin;
 import com.piggyplugins.SpeedDartMaker.SpeedDartMakerPlugin;
+import com.piggyplugins.strategyexample.StrategySmithPlugin;
 import com.polyplugins.AutoBoner.AutoBonerPlugin;
 import com.polyplugins.AutoCombat.AutoCombatPlugin;
 import com.polyplugins.AutoRuneDragon.RuneDragonsPlugin;
@@ -29,7 +30,7 @@ public class PluginTester {
                 ButterflyPlugin.class, FiremakingPlugin.class, DialogueContinuerPlugin.class,
                 KittenFeederPlugin.class, AutoChompyPlugin.class, PowerSkillerPlugin.class, AutoTrapperPlugin.class,
                 SpeedDartMakerPlugin.class, RooftopAgilityPlugin.class, UpkeepPlugin.class, PvpHelperPlugin.class,
-                CannonReloaderPlugin.class, AutoSmith.class, RuneDragonsPlugin.class);
+                CannonReloaderPlugin.class, AutoSmith.class, RuneDragonsPlugin.class, StrategySmithPlugin.class);
         RuneLite.main(args);
     }
 }
