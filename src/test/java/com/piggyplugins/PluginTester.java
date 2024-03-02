@@ -29,7 +29,7 @@ public class PluginTester {
                 PiggyUtilsPlugin.class// Don't remove these
         /* Add your plugins in this method when running from the IDE.
            Make sure to include them as a dependency in the build.gradle via `testImplementation` */,
-                StrategySmithPlugin.class);
+                StrategySmithPlugin.class, AutoBonerPlugin.class);
         RuneLite.main(args);
     }
 }
