@@ -51,8 +51,8 @@ public enum QuickPrayers {
     /**
      * Returns a list of selected prayers based on the value of varbit 4102
      *
-     * @param varbitValue
-     * @return
+     * @param varbitValue value of varbit 4102
+     * @return list of prayers selected for quick pray toggle
      */
     public static List<Prayer> getSelectedPrayers(int varbitValue) {
         List<Prayer> selectedPrayers = new ArrayList<>();
