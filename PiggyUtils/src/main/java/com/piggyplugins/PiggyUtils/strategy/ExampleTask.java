@@ -1,21 +1,27 @@
 package com.piggyplugins.PiggyUtils.strategy;
 
-import com.google.inject.Inject;
-import net.runelite.api.Client;
-import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.Config;
 import net.runelite.client.plugins.Plugin;
-import net.runelite.client.plugins.worldhopper.WorldHopperPlugin;
 
+//do something like this to pass in your specific plugin and config
+//extends AbstractTask<StrategySmithPlugin, StrategySmithConfig>
 public class ExampleTask extends AbstractTask {
     public ExampleTask( Plugin plugin, Config config) {
         super( plugin, config);
     }
+
+    /**
+     * If this returns true, this task will execute
+     * @return
+     */
     @Override
     public boolean validate() {
         return false;
     }
 
+    /**
+     * This is the code that will be executed when validate returns true
+     */
     @Override
     public void execute() {
 
