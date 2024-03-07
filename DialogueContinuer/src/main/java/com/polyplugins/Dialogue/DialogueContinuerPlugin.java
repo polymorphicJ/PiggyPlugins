@@ -34,8 +34,6 @@ public class DialogueContinuerPlugin extends Plugin {
 
     public int timeout = 0;
 
-    public RunMode runMode = RunMode.DIALOGUE_CONTINUE;
-
     @Override
     protected void startUp() throws Exception {
         timeout = 0;
