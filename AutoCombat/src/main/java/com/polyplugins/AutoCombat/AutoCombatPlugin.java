@@ -82,7 +82,7 @@ public class AutoCombatPlugin extends Plugin {
 
     private boolean hasFood = false;
     private boolean hasPrayerPot = false;
-    private boolean hasCombatPot = false;
+    private boolean hasCombatPot = false,hasRangingPot = false;
     private boolean hasBones = false;
     public boolean isSlayerNpc = false;
     public SlayerNpc slayerInfo = null;
@@ -168,6 +168,7 @@ public class AutoCombatPlugin extends Plugin {
         hasFood = supplies.findFood() != null;
         hasPrayerPot = supplies.findPrayerPotion() != null;
         hasCombatPot = supplies.findCombatPotion() != null;
+        hasRangingPot = supplies.findRangingPotion() != null;
         hasBones = supplies.findBone() != null;
 
 //        if (lootTile != null) {
@@ -273,7 +274,7 @@ public class AutoCombatPlugin extends Plugin {
     }
 
     private void handleRangingPot() {
-        if (hasCombatPot) {
+        if (hasRangingPot) {
             InventoryInteraction.useItem(supplies.findRangingPotion(), "Drink");
 //            timeout = 1;
         }
