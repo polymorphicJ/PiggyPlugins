@@ -1,17 +1,21 @@
 package com.polyplugins.Dialogue;
 
 
+import com.example.EthanApiPlugin.Collections.Inventory;
 import com.example.EthanApiPlugin.Collections.NPCs;
 import com.example.EthanApiPlugin.Collections.Widgets;
+import com.example.InteractionApi.InventoryInteraction;
 import com.example.InteractionApi.NPCInteraction;
 import com.example.Packets.MousePackets;
 import com.example.Packets.WidgetPackets;
 import com.google.inject.Inject;
+import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.widgets.Widget;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -19,8 +23,8 @@ import net.runelite.client.plugins.PluginDescriptor;
 import java.util.Optional;
 
 @PluginDescriptor(
-        name = "<html><font color=\"#7ecbf2\">[PJ]</font>Dialogue Continuer 2</html>",
-        description = "Continues conversation and automates quest helper dialogue",
+        name = "<html><font color=\"#7ecbf2\">[PJ]</font>Misc Handler</html>",
+        description = "Handles miscellaneous stuff in the game",
         enabledByDefault = false,
         tags = {"poly", "plugin"}
 )
@@ -44,6 +48,11 @@ public class DialogueContinuerPlugin extends Plugin {
         timeout = 0;
     }
 
+    @Provides
+    DialogueContinuerConfig provideConfig(ConfigManager configManager) {
+        return configManager.getConfig(DialogueContinuerConfig.class);
+    }
+
 
     @Subscribe
     private void onGameTick(GameTick event) {
@@ -55,13 +64,21 @@ public class DialogueContinuerPlugin extends Plugin {
             timeout--;
             return;
         }
-        if (continueDialogue()) {
+        if (config.continueDialogue() && continueDialogue()) {
             return; //do not dismiss randoms until dialogue is finished
         }
 
         if (config.dismissRandoms()) {
             dismissRandoms();
         }
+
+        Inventory.search().onlyUnnoted().withName("Vial").filter(v -> config.dropEmptyVials()).first().ifPresent(vial -> {
+            InventoryInteraction.useItem(vial, "Drop");
+        });
+
+        Inventory.search().onlyUnnoted().withName("Jug").filter(b -> config.dropEmptyWineJugs()).first().ifPresent(bone -> {
+            InventoryInteraction.useItem(bone, "Drop");
+        });
 
     }
 
