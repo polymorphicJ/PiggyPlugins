@@ -28,25 +28,6 @@ public interface DialogueContinuerConfig extends Config {
         return Keybind.NOT_SET;
     }
 
-    @ConfigSection(
-            name = "Tick Delay",
-            description = "",
-            position = 1
-
-    )
-    String tickDelaySection = "Tick Delay";
-
-    @ConfigItem(
-            name = "Tick Delay",
-            keyName = "tickDelay",
-            description = "Slow down dialogue",
-            position = 1,
-            section = tickDelaySection
-    )
-    default int tickDelay() {
-        return 0;
-    }
-
     @ConfigItem(
             name = "Continue Dialogue",
             description = "",
