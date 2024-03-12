@@ -65,6 +65,7 @@ public class DialogueContinuerPlugin extends Plugin {
             return;
         }
         if (config.continueDialogue() && continueDialogue()) {
+            log.info("continue 1");
             return; //do not dismiss randoms until dialogue is finished
         }
 
@@ -112,24 +113,30 @@ public class DialogueContinuerPlugin extends Plugin {
 //            WidgetPackets.queueResumePause(widget.getId(), Integer.parseInt(option));
 //            timeout = 0;
 //        });
+        Optional<Widget> mainContinueOpt = Widgets.search().withTextContains("Click here to continue").first();
+        if (mainContinueOpt.isPresent()) {
+            MousePackets.queueClickPacket();
+            WidgetPackets.queueResumePause(mainContinueOpt.get().getId(), -1);
+            timeout = 0;
+            return true;
+        }
+
         Optional<Widget> continue1Opt = Widgets.search().withId(12648448).hiddenState(false).first();
         if (continue1Opt.isPresent()) {
+            log.info("continue 1");
             MousePackets.queueClickPacket();
             WidgetPackets.queueResumePause(continue1Opt.get().getId(), 1);
             return true;
         }
         Optional<Widget> continue2Opt = Widgets.search().withId(41484288).hiddenState(false).first();
         if (continue2Opt.isPresent()) {
+            log.info("continue 2");
             MousePackets.queueClickPacket();
             WidgetPackets.queueResumePause(continue2Opt.get().getId(), 1);
             return true;
         }
+        log.info("ret false");
         return false;
-//        Widgets.search().withTextContains("Click here to continue").first().ifPresent(widget -> {
-//            MousePackets.queueClickPacket();
-//            WidgetPackets.queueResumePause(widget.getId(), -1);
-//            timeout = 0;
-//        });
     }
 
 }
