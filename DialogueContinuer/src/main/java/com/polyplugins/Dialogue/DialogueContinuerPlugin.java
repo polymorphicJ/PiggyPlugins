@@ -135,7 +135,7 @@ public class DialogueContinuerPlugin extends Plugin {
             WidgetPackets.queueResumePause(continue2Opt.get().getId(), 1);
             return true;
         }
-        log.info("ret false");
+//        log.info("ret false");
         return false;
     }
 
