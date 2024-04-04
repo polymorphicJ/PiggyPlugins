@@ -3,6 +3,7 @@ package com.piggyplugins.polyhunter;
 
 import com.example.EthanApiPlugin.Collections.TileObjects;
 import com.google.common.base.Strings;
+import com.piggyplugins.polyhunter.data.HunterMode;
 import net.runelite.api.*;
 import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
@@ -35,11 +36,26 @@ public class PolyHunterOverlay extends Overlay {
     public Dimension render(Graphics2D graphics) {
         panelComponent.getChildren().clear();
 
+        LineComponent started = buildLine("Poly Hunter: ", plugin.started ? "Running" : "Paused");
         LineComponent timeout = buildLine("Timeout: ", String.valueOf(plugin.timeout));
 
+        panelComponent.getChildren().add(started);
         panelComponent.getChildren().add(timeout);
 
-        return null;
+        if (plugin.config.hunterMode() == HunterMode.SALAMANDER) {
+
+            LineComponent maxTraps = buildLine("Max Traps: ", String.valueOf(plugin.maxTraps));
+            LineComponent traps = buildLine("Caught traps: ", String.valueOf(plugin.helper.getCaughtTraps()));
+            LineComponent trapSupplies = buildLine("Set traps: ", String.valueOf(plugin.helper.getSetTraps()));
+            LineComponent tickRegion = buildLine("Ticks out of Region: ", String.valueOf(plugin.ticksNotInRegion));
+
+            panelComponent.getChildren().add(maxTraps);
+            panelComponent.getChildren().add(traps);
+            panelComponent.getChildren().add(trapSupplies);
+            panelComponent.getChildren().add(tickRegion);
+        }
+
+        return panelComponent.render(graphics);
     }
 
     /**
