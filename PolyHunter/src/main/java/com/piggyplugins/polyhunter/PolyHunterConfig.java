@@ -18,26 +18,16 @@ public interface PolyHunterConfig extends Config {
         return Keybind.NOT_SET;
     }
 
-    @ConfigSection(
-            name = "Tick Delay",
-            description = "",
-            position = 1
-
-    )
-    String tickDelaySection = "Tick Delay";
-
     @ConfigItem(
             name = "Tick Delay",
             keyName = "tickDelay",
             description = "Slow down dialogue",
-            position = 1,
-            section = tickDelaySection
+            position = 1
     )
     default int tickDelay() {
         return 0;
     }
 
-    //default HunterMode hunterMode
     @ConfigItem(
             keyName = "hunterMode",
             name = "Hunter Mode",
@@ -60,7 +50,8 @@ public interface PolyHunterConfig extends Config {
             keyName = "salamanderType",
             name = "Salamander",
             description = "",
-            position = 21
+            position = 21,
+            section = salamanderTrappingSection
     )
     default Salamander salamander() {
         return Salamander.RED_SALAMANDER;
@@ -70,7 +61,8 @@ public interface PolyHunterConfig extends Config {
             keyName = "maxArea",
             name = "Max dist",
             description = "Max distance from start tile to set traps",
-            position = 22
+            position = 22,
+            section = salamanderTrappingSection
     )
     default int maxDist() {
         return 10;
@@ -89,7 +81,8 @@ public interface PolyHunterConfig extends Config {
             keyName = "butterflyName",
             name = "Butterfly",
             description = "",
-            position = 1
+            position = 1,
+            section = butterflyCatchingSection
     )
     default ButterflyType butterfly() {
         return ButterflyType.RUBY_HARVEST;
